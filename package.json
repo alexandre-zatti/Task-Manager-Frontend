@@ -1,0 +1,25 @@
+{
+  "name": "frontend-dev",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "svelte-kit dev",
+    "build": "svelte-kit build",
+    "preview": "svelte-kit preview",
+    "lint": "eslint --ignore-path .gitignore ."
+  },
+  "devDependencies": {
+    "@beyonk/svelte-notifications": "^3.1.0",
+    "@sveltejs/kit": "next",
+    "chota": "^0.8.0",
+    "eslint": "^7.22.0",
+    "eslint-plugin-svelte3": "^3.2.0",
+    "svelte": "^3.34.0",
+    "svelte-chota": "^1.8.4",
+    "svelte-dnd-action": "^0.9.8"
+  },
+  "type": "module",
+  "dependencies": {
+    "svelte-icons": "^2.1.0",
+    "svelte-loading-spinners": "^0.1.5"
+  }
+}

@@ -1,0 +1,275 @@
+<script>
+  import { BASE_URL } from "../stores/backendUrl";
+  import { refresh } from "../stores/refresh";
+  import { notify } from "../stores/notify";
+  import { Modal } from "svelte-chota";
+  import { Stretch } from "svelte-loading-spinners";
+  import { NotificationDisplay, notifier } from "@beyonk/svelte-notifications";
+  import Board from "../components/TasksBoard.svelte";
+  import TaskView from "../components/TaskView.svelte";
+  import AbstractForm from "../components/AbstractForm.svelte";
+
+  let standard = "tarefa";
+  let dataLink = $BASE_URL + "tarefa/";
+  let openModal = false;
+  let openTaskModal = false;
+  let edit = false;
+  let specifyCreator = true;
+  let itemId;
+  let requestCount = 0;
+  let updatedItems = [];
+  let projects;
+  let tasks;
+  let taskId;
+  let todo = [];
+  let doing = [];
+  let done = [];
+
+  const getInitialData = async () => {
+    $refresh = false;
+    const responseProjects = await fetch($BASE_URL + "projeto");
+    projects = await responseProjects.json();
+
+    const responseTasks = await fetch($BASE_URL + "tarefa");
+    tasks = await responseTasks.json();
+
+    return { projects, tasks };
+  };
+
+  const prepareDataForBoard = (tasks) => {
+    todo = [];
+    doing = [];
+    done = [];
+
+    tasks.forEach((task) => {
+      if (task.id_situacao == 2) {
+        todo.push(task);
+      }
+      if (task.id_situacao == 3) {
+        doing.push(task);
+      }
+      if (task.id_situacao == 4) {
+        done.push(task);
+      }
+    });
+
+    let board = [
+      {
+        id: 1,
+        name: "Fazer",
+        items: todo,
+      },
+      {
+        id: 2,
+        name: "Fazendo",
+        items: doing,
+      },
+      {
+        id: 3,
+        name: "Feitas",
+        items: done,
+      },
+    ];
+    return board;
+  };
+
+  const handleBoardUpdate = (columnItems) => {
+    requestCount++;
+    updatedItems.push(columnItems);
+
+    if (requestCount == 2) {
+      handleBoardFinalize(updatedItems);
+      updatedItems = [];
+      requestCount = 0;
+    }
+  };
+
+  const handleTaskView = (task) => {
+    taskId = task;
+    openTaskModal = true;
+  };
+
+  const handleBoardFinalize = (updatedItems) => {
+    let source = updatedItems[1];
+    let destination = updatedItems[0];
+
+    if (source.id == destination.id) {
+      return false;
+    }
+    if (destination.id == 1) {
+      let moved;
+      let found = false;
+      destination.items.forEach((item) => {
+        todo.forEach((task) => {
+          if (task.id == item.id) {
+            found = true;
+          }
+        });
+        if (!found) {
+          moved = item;
+        }
+        found = false;
+      });
+
+      if (moved) {
+        updateSituation(moved, 2);
+      }
+    }
+
+    if (destination.id == 2) {
+      let moved;
+      let found = false;
+      destination.items.forEach((item) => {
+        doing.forEach((task) => {
+          if (task.id == item.id) {
+            found = true;
+          }
+        });
+        if (!found) {
+          moved = item;
+        }
+        found = false;
+      });
+
+      if (moved) {
+        updateSituation(moved, 3);
+      }
+    }
+
+    if (destination.id == 3) {
+      let moved;
+      let found = false;
+      destination.items.forEach((item) => {
+        done.forEach((task) => {
+          if (task.id == item.id) {
+            found = true;
+          }
+        });
+        if (!found) {
+          moved = item;
+        }
+        found = false;
+      });
+
+      if (moved) {
+        updateSituation(moved, 4);
+      }
+    }
+  };
+
+  const updateSituation = async (moved, newSituation) => {
+    const res = await fetch($BASE_URL + "tarefa/put/" + moved.id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        situacao: newSituation,
+      }),
+    });
+  };
+
+  $: if ($notify == true) {
+    notifier.success(
+      edit ? "Item editado com sucesso!" : "Item criado com sucesso",
+      2000
+    );
+    $notify = false;
+  }
+</script>
+
+<div class="container">
+  <NotificationDisplay />
+  <Modal bind:open={openModal}>
+    <AbstractForm
+      bind:openModal
+      bind:standard
+      bind:itemId
+      bind:dataLink
+      bind:edit
+      bind:specifyCreator
+    />
+  </Modal>
+  <Modal bind:open={openTaskModal}>
+    <TaskView bind:taskId />
+  </Modal>
+  <div class="header">
+    <h1>Tarefas</h1>
+  </div>
+  <div class="add">
+    <button
+      class="add-button"
+      on:click={(event) => {
+        openModal = true;
+        edit = false;
+      }}>Nova Tarefa</button
+    >
+  </div>
+  {#key $refresh}
+    {#await getInitialData()}
+      <Stretch size="60" color="rgb(145, 129, 212)" unit="px" duration="1s" />
+    {:then value}
+      <Board
+        columnItems={prepareDataForBoard(value.tasks)}
+        boardUpdate={handleBoardUpdate}
+        taskView={handleTaskView}
+      />
+    {:catch error}
+      <h2>Ocorreu um erro!</h2>
+    {/await}
+  {/key}
+</div>
+
+<style>
+  .container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    font-family: Roboto;
+    color: #a8adb3;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .container :global(.modal) {
+    color: #a8adb3;
+    background-color: #22272e;
+    border-radius: 10px;
+    overflow-y: auto;
+  }
+
+  .header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10rem;
+    width: 40rem;
+    height: 3rem;
+  }
+
+  button {
+    cursor: pointer;
+    height: 2.5rem;
+    min-width: 6rem;
+    margin-right: 1rem;
+    font-size: medium;
+    border: 2px solid rgb(107, 84, 209);
+    border-radius: 5px;
+    transition: 300ms;
+  }
+
+  button:hover {
+    transform: scale(1.1);
+  }
+
+  .add {
+    width: 46.5rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .add-button {
+    color: white;
+    background-color: rgb(145, 129, 212);
+  }
+</style>
