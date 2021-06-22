@@ -43,7 +43,7 @@
       goto("/preferences");
     }}
   >
-    <span>Preferencias</span>
+    <span>Configurações</span>
   </div>
   <div
     class="item"

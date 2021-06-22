@@ -6,8 +6,6 @@
     );
     let project = await projectResponse.json();
 
-    console.log(project);
-
     const usersResponse = await fetch(
       "https://backend-dev-web.herokuapp.com/usuario/"
     );
@@ -223,48 +221,4 @@
     text-align: justify;
     text-justify: inter-word;
   }
-
-  /* .cards {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-    width: 100%;
-  } */
-
-  /* .card {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    min-width: 10rem;
-    width: 10rem;
-    min-height: 3rem;
-    max-height: 3rem;
-    padding: 1rem;
-    margin: 0.5rem;
-    border: 1px solid rgb(157, 145, 206);
-    border-radius: 7px;
-    background-color: #22272e;
-    box-shadow: 0 0 20px rgb(119, 112, 144);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: 300ms;
-  }
-
-  .card-fazer {
-    border: 1px solid rgb(209, 47, 47);
-    border-radius: 7px;
-    box-shadow: 0 0 20px rgb(179, 90, 90);
-  }
-
-  .card-fazendo {
-    border: 1px solid rgb(209, 206, 47);
-    border-radius: 7px;
-    box-shadow: 0 0 20px rgb(228, 206, 81);
-  }
-
-  .card-feita {
-    border: 1px solid rgb(48, 230, 78);
-    border-radius: 7px;
-    box-shadow: 0 0 20px rgb(102, 235, 90);
-  } */
 </style>

@@ -44,15 +44,13 @@
     />
   </Modal>
   <div class="add">
-    <div
-      class="add-icon"
+    <button
+      class="add-button"
       on:click={(event) => {
         openModal = true;
         edit = false;
-      }}
+      }}>Criar {standard}</button
     >
-      <FaPlus />
-    </div>
   </div>
   {#key $refresh}
     {#await getData()}
@@ -112,7 +110,7 @@
     margin: 1rem 0;
     font-size: 0.9em;
     font-weight: 400;
-    min-width: 30rem;
+    min-width: 40rem;
     color: #a8adb3;
     /* box-shadow: 0 0 20px rgb(119, 112, 144); */
   }
@@ -153,32 +151,30 @@
     transform: scale(1.5);
   }
 
-  .add-icon {
-    color: rgb(157, 145, 206);
-    width: 1.5em;
-    height: 1.5em;
+  button {
+    cursor: pointer;
+    height: 2.5rem;
+    min-width: 6rem;
+    margin-right: 1rem;
+    font-size: medium;
+    border: 2px solid rgb(107, 84, 209);
+    border-radius: 5px;
     transition: 300ms;
   }
 
-  .add-icon:hover {
-    cursor: pointer;
-    animation: spin 3s infinite;
-    animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  button:hover {
+    transform: scale(1.1);
   }
 
   .add {
+    width: 42rem;
+    margin-top: 1rem;
     display: flex;
     justify-content: flex-end;
-    width: 100%;
-    margin-right: 10rem;
   }
 
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+  .add-button {
+    color: white;
+    background-color: rgb(157, 145, 206);
   }
 </style>

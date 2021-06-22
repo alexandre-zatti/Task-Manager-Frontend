@@ -11,7 +11,7 @@
 
 <div class="container">
   <div class="header">
-    <h1>Preferencias</h1>
+    <h1>Configurações</h1>
   </div>
   <div class="tabs">
     <div class={active == 0 ? "tab-selected" : "tab"} id="0" on:click={setTab}>
@@ -72,7 +72,7 @@
     display: flex;
     justify-content: center;
     margin-top: 0.5rem;
-    width: 40rem;
+    width: 50rem;
     height: 40rem;
   }
 

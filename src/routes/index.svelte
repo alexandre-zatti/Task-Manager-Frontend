@@ -18,40 +18,76 @@
   let itemId;
   let requestCount = 0;
   let updatedItems = [];
-  let projects;
-  let tasks;
   let taskId;
+  let selected;
   let todo = [];
   let doing = [];
   let done = [];
 
   const getInitialData = async () => {
     $refresh = false;
+
+    let userProjects = [];
+    let userTasks = [];
+
+    const responseUser = await fetch($BASE_URL + "login/getAuthUser", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+    let currentUser = await responseUser.json();
+
+    const responseProjectsUser = await fetch(
+      $BASE_URL + "projeto_usuario/id_usuario/" + currentUser.id
+    );
+    let projectsUser = await responseProjectsUser.json();
+
     const responseProjects = await fetch($BASE_URL + "projeto");
-    projects = await responseProjects.json();
+    let projects = await responseProjects.json();
 
     const responseTasks = await fetch($BASE_URL + "tarefa");
-    tasks = await responseTasks.json();
+    let tasks = await responseTasks.json();
 
-    return { projects, tasks };
+    projectsUser.forEach((projectUser) => {
+      projects.forEach((project) => {
+        if (projectUser.id_projeto == project.id) {
+          userProjects.push(project);
+        }
+      });
+    });
+
+    userProjects.forEach((project) => {
+      tasks.forEach((task) => {
+        if (project.id == task.id_projeto) {
+          userTasks.push(task);
+        }
+      });
+    });
+
+    return { userProjects, userTasks, currentUser };
   };
 
-  const prepareDataForBoard = (tasks) => {
+  const prepareDataForBoard = (tasks, selected) => {
     todo = [];
     doing = [];
     done = [];
 
-    tasks.forEach((task) => {
-      if (task.id_situacao == 2) {
-        todo.push(task);
-      }
-      if (task.id_situacao == 3) {
-        doing.push(task);
-      }
-      if (task.id_situacao == 4) {
-        done.push(task);
-      }
-    });
+    if (selected) {
+      tasks.forEach((task) => {
+        if (task.id_projeto == selected.id) {
+          if (task.id_situacao == 2) {
+            todo.push(task);
+          }
+          if (task.id_situacao == 3) {
+            doing.push(task);
+          }
+          if (task.id_situacao == 4) {
+            done.push(task);
+          }
+        }
+      });
+    }
 
     let board = [
       {
@@ -180,6 +216,9 @@
 
 <div class="container">
   <NotificationDisplay />
+  <Modal bind:open={openTaskModal}>
+    <TaskView bind:taskId bind:openModal bind:itemId bind:edit />
+  </Modal>
   <Modal bind:open={openModal}>
     <AbstractForm
       bind:openModal
@@ -190,27 +229,32 @@
       bind:specifyCreator
     />
   </Modal>
-  <Modal bind:open={openTaskModal}>
-    <TaskView bind:taskId />
-  </Modal>
   <div class="header">
     <h1>Tarefas</h1>
-  </div>
-  <div class="add">
-    <button
-      class="add-button"
-      on:click={(event) => {
-        openModal = true;
-        edit = false;
-      }}>Nova Tarefa</button
-    >
   </div>
   {#key $refresh}
     {#await getInitialData()}
       <Stretch size="60" color="rgb(145, 129, 212)" unit="px" duration="1s" />
     {:then value}
+      <div class="add">
+        <select bind:value={selected}>
+          {#each value.userProjects as project}
+            <option value={project}>
+              {project.nome}
+            </option>
+          {/each}
+        </select>
+        <button
+          class="add-button"
+          on:click={(event) => {
+            openModal = true;
+            edit = false;
+          }}>Criar Tarefa</button
+        >
+      </div>
+
       <Board
-        columnItems={prepareDataForBoard(value.tasks)}
+        columnItems={prepareDataForBoard(value.userTasks, selected)}
         boardUpdate={handleBoardUpdate}
         taskView={handleTaskView}
       />
@@ -243,14 +287,22 @@
     justify-content: center;
     align-items: center;
     margin-top: 10rem;
-    width: 40rem;
+    width: 45rem;
+    height: 3rem;
+  }
+
+  select {
+    margin-left: 1rem;
+    background-color: #22272e;
+    color: white;
+    width: 10rem;
     height: 3rem;
   }
 
   button {
     cursor: pointer;
-    height: 2.5rem;
-    min-width: 6rem;
+    height: 3rem;
+    min-width: 7rem;
     margin-right: 1rem;
     font-size: medium;
     border: 2px solid rgb(107, 84, 209);
@@ -263,13 +315,13 @@
   }
 
   .add {
-    width: 46.5rem;
+    width: 56rem;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
   }
 
   .add-button {
     color: white;
-    background-color: rgb(145, 129, 212);
+    background-color: #22272e;
   }
 </style>

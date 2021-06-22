@@ -128,7 +128,7 @@ export const tableStandards = readable({
           label:"Tempo gasto",
           name: "tempo_gasto",
           field: "input",
-          type: "number",
+          type: "text",
           placeholder: "Selecione o tempo gasto em horas...",
         },
       ],

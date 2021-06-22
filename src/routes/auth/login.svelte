@@ -17,7 +17,6 @@
         senha: senha,
       }),
     });
-    console.log(res);
     if (!res.ok) {
       loginOk = false;
     } else {

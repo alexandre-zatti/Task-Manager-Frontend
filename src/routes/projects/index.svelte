@@ -52,7 +52,7 @@
       on:click={(event) => {
         openModal = true;
         edit = false;
-      }}>Novo Projeto</button
+      }}>Criar Projeto</button
     >
   </div>
   {#key $refresh}
@@ -203,6 +203,6 @@
 
   .add-button {
     color: white;
-    background-color: rgb(145, 129, 212);
+    background-color: #22272e;
   }
 </style>

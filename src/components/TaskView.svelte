@@ -2,11 +2,14 @@
   import { BASE_URL } from "../stores/backendUrl";
   import { Stretch } from "svelte-loading-spinners";
   import { refresh } from "../stores/refresh";
+  import FaPencilAlt from "svelte-icons/fa/FaPencilAlt.svelte";
 
   export let taskId;
+  export let openModal;
+  export let itemId;
+  export let edit;
 
   const getTask = async () => {
-    $refresh = false;
     const responseTask = await fetch($BASE_URL + "tarefa/" + taskId);
     let task = await responseTask.json();
 
@@ -49,17 +52,30 @@
       complexidade,
     };
   };
+
+  const handleEdit = (idTask) => {
+    openModal = true;
+    edit = true;
+    itemId = idTask;
+  };
 </script>
 
 <div class="container">
-  {#key $refresh}
+  {#key openModal}
     {#await getTask()}
       <Stretch size="60" color="rgb(145, 129, 212)" unit="px" duration="1s" />
     {:then value}
       <div class="content">
         <div class="header">
           <div class="title">
-            <h1>#{value.task.id} - {value.task.titulo}</h1>
+            <h1>
+              #{value.task.id} - {value.task.titulo}
+            </h1>
+          </div>
+          <div class="edit">
+            <div class="icon" on:click={() => handleEdit(value.task.id)}>
+              <FaPencilAlt />
+            </div>
           </div>
         </div>
         <div class="info-container">
@@ -87,7 +103,10 @@
             </h3>
           </div>
         </div>
-        <p>{value.task.descricao}</p>
+        <div class="desc">
+          <h2>Descrição:</h2>
+          <p>{value.task.descricao}</p>
+        </div>
       </div>
     {/await}
   {/key}
@@ -112,6 +131,9 @@
     display: flex;
     align-items: flex-start;
     flex-direction: column;
+    border: 1px solid rgb(157, 145, 206);
+    border-radius: 4px;
+    margin-left: 0.5rem;
   }
 
   .info-container {
@@ -132,5 +154,28 @@
 
   .title {
     width: 50%;
+  }
+
+  .edit {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 50%;
+  }
+  .icon {
+    color: rgb(157, 145, 206);
+    width: 1.25em;
+    height: 1.25em;
+    transition: 300ms;
+  }
+
+  .icon:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+  }
+
+  .desc {
+    width: 100%;
+    text-align: justify;
   }
 </style>
