@@ -2,17 +2,15 @@
   export const load = async (ctx) => {
     let slug = ctx.page.params.slug;
     const projectResponse = await fetch(
-      "https://backend-dev-web.herokuapp.com/projeto/" + slug
+      "http://localhost:1337/projeto/" + slug
     );
     let project = await projectResponse.json();
 
-    const usersResponse = await fetch(
-      "https://backend-dev-web.herokuapp.com/usuario/"
-    );
+    const usersResponse = await fetch("http://localhost:1337/usuario/");
     let users = await usersResponse.json();
 
     const participantsResponse = await fetch(
-      "https://backend-dev-web.herokuapp.com/projeto_usuario/id_projeto/" + slug
+      "http://localhost:1337/projeto_usuario/id_projeto/" + slug
     );
     let participants = await participantsResponse.json();
 

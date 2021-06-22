@@ -6,7 +6,7 @@
   let loginOk = true;
 
   const login = async () => {
-    const res = await fetch("https://backend-dev-web.herokuapp.com/login", {
+    const res = await fetch("http://localhost:1337/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

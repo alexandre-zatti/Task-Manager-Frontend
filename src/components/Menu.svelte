@@ -5,16 +5,13 @@
   import { goto } from "$app/navigation";
 
   const logout = async () => {
-    const response = await fetch(
-      "https://backend-dev-web.herokuapp.com/logout/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      }
-    );
+    const response = await fetch("http://localhost:1337/logout/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
 
     await goto("/auth/login");
   };

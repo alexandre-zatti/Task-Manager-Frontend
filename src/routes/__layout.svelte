@@ -4,15 +4,12 @@
   import { goto } from "$app/navigation";
 
   const getAuthUser = async () => {
-    const response = await fetch(
-      "https://backend-dev-web.herokuapp.com/login/getAuthUser",
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      }
-    );
+    const response = await fetch("http://localhost:1337/login/getAuthUser", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
     return await response.json();
   };
 </script>

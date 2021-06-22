@@ -8,20 +8,17 @@
   let email = "";
   let registerOk = true;
   const register = async () => {
-    const res = await fetch(
-      "https://backend-dev-web.herokuapp.com/usuario/post",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          nome: usuario,
-          email: email,
-          senha: senha,
-        }),
-      }
-    );
+    const res = await fetch("http://localhost:1337/usuario/post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nome: usuario,
+        email: email,
+        senha: senha,
+      }),
+    });
     if (!res.ok) {
       registerOk = false;
     } else {

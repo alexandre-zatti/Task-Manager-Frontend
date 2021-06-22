@@ -101,6 +101,11 @@
             <h3>
               Atribuido: <span class="special">{value.atribuido.nome}</span>
             </h3>
+            <h3>
+              Tempo Gasto: <span class="special"
+                >{value.task.tempo_gasto} h</span
+              >
+            </h3>
           </div>
         </div>
         <div class="desc">

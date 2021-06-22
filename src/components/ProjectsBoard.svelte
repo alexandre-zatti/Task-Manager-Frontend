@@ -75,17 +75,19 @@
     padding: 0.5em;
   }
   .column {
-    height: 35rem;
+    height: 100%;
     width: 250px;
     padding: 0.5em;
+    padding-bottom: 0;
     margin: 1em;
+    margin-bottom: 0;
     float: left;
     border: 2px solid #5a5a5a;
     border-radius: 7px;
-    overflow-y: hidden;
+    overflow-y: auto;
   }
   .column-content {
-    height: 100%;
+    height: 35rem;
   }
   .column-title {
     margin-bottom: 1em;
